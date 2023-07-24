@@ -8,31 +8,42 @@ Network_Manager::Network_Manager(const int& port)
     {
         std::cout << "Could not connect to socket" << std::endl;
     }
+
+    this->port = port;
 }
 
-void Network_Manager::listen()
+float* Network_Manager::listen()
 {
-    int data[5];
-    std::size_t received;
+    float* data = new float[3];
+    sf::Packet packet;
 
-    // UDP socket:
-    sf::IpAddress sender;
     unsigned short port;
-    if (socket.receive(data, 5, received, sender, port) != sf::Socket::Done)
+    sf::IpAddress sender;
+
+    if (socket.receive(packet, sender, port) != sf::Socket::Done)
     {
-        std::cout << "Error recieving data" << std::endl;
+        std::printf("Error recieving data");
     }
-    std::cout << "Received " << received << " bytes from " << sender << " on port " << port << std::endl;
+
+    for (int i = 0; i < 3; i++)
+    {
+        packet >> data[i];
+    }
+
+    return data;
 }
 
-void Network_Manager::send_data()
+void Network_Manager::send_data(const float& x, const float& y, const float& rotation, const std::string& address)
 {
-    int data[5] = {4, 1, 5, 2, 3};
-    sf::IpAddress recipient = "192.168.1.61";
-    unsigned short port = 9958;
+    float data[3] = {x, y, rotation};
+    sf::Packet packet;
+    packet << data;
+
+    sf::IpAddress recipient = address;
+    unsigned short port = this->port;
     
-    if (this->socket.send(data, 5, recipient, port) != sf::Socket::Done)
+    if (socket.send(packet, recipient, port) != sf::Socket::Done)
     {
-        // error...
+        std::cout << "Error sending data" << std::endl;
     }
 }

@@ -16,7 +16,7 @@ public:
     bool update();
 
     int create_car(const Car& car);
-    void update_car(const Car& car, const int& id);
+    void update_car(const Vector& pos, const float& rotation, const int& car_id);
 
 public:
     float delta_time;

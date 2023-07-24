@@ -57,10 +57,10 @@ int Window::create_car(const Car& car)
     return this->car_counter - 1;
 }
 
-void Window::update_car(const Car& car, const int& car_id)
+void Window::update_car(const Vector& pos, const float& rotation, const int& car_id)
 {
-    this->cars[car_id].setPosition(sf::Vector2f(car.position.x, car.position.y));
-    this->cars[car_id].setRotation(car.rotation);
+    this->cars[car_id].setPosition(sf::Vector2f(pos.x, pos.y));
+    this->cars[car_id].setRotation(rotation);
 }
 
 void Window::draw()
