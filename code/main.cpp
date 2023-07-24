@@ -20,9 +20,6 @@ int main()
     Network_Manager network_manager(9958);
     std::thread test(recieve_data, std::ref(network_manager));
 
-    int* data_to_send = new int[3, 5, 1, 2, 8];
-    sf::IpAddress recipient = "192.168.1.61";
-
     int pixels_per_meter = 10;
 
     Car car(15, 62, 30, 1.5, 20, Vector(300, 300), pixels_per_meter);
@@ -33,6 +30,8 @@ int main()
     bool window_open = true;
     while (window_open == true)
     {
+        network_manager.send_data();
+
         float acceleration = 0;
         float steering = 0;
 

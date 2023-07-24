@@ -8,7 +8,7 @@ public:
     Network_Manager() = default;
     Network_Manager(const int& port);
 
-    void send_data(const char*& data);
+    void send_data();
     
     void listen();
 
