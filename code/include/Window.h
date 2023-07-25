@@ -18,6 +18,8 @@ public:
     int create_car(const Car& car);
     void update_car(const Vector& pos, const float& rotation, const int& car_id);
 
+    void update_player_car(const Vector& pos, const float& rotation);
+
 public:
     float delta_time;
 
@@ -31,6 +33,8 @@ private:
     sf::Clock clock;
 
     sf::Sprite* cars;
+    sf::Sprite player_car;
+
     int car_counter;
     int max_num_of_cars;
     int pixels_per_meter;

@@ -11,6 +11,7 @@ Window::Window(const Vector& window_dimensions, const int& max_num_of_cars, cons
     this->window.create(sf::VideoMode(window_dimensions.x, window_dimensions.y), "Racing Game");
 
     this->cars = new sf::Sprite[max_num_of_cars];
+
     this->car_counter = 0;
     this->max_num_of_cars = max_num_of_cars;
     this->pixels_per_meter = pixels_per_meter;
@@ -19,6 +20,10 @@ Window::Window(const Vector& window_dimensions, const int& max_num_of_cars, cons
     this->car_scale = 3.0f*pixels_per_meter/this->car_texture.getSize().x;
 
     this->delta_time = this->clock.restart().asSeconds();
+
+    this->player_car.setTexture(this->car_texture);
+    this->player_car.setOrigin(sf::Vector2f(this->car_texture.getSize().x/2.0f, this->car_texture.getSize().y/2.0f));
+    this->player_car.setScale(sf::Vector2f(this->car_scale, this->car_scale));
 }
 
 bool Window::update()
@@ -61,6 +66,12 @@ void Window::update_car(const Vector& pos, const float& rotation, const int& car
 {
     this->cars[car_id].setPosition(sf::Vector2f(pos.x, pos.y));
     this->cars[car_id].setRotation(rotation);
+}
+
+void Window::update_player_car(const Vector& pos, const float& rotation)
+{
+    this->player_car.setPosition(sf::Vector2f(pos.x, pos.y));
+    this->player_car.setRotation(rotation);
 }
 
 void Window::draw()

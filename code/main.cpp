@@ -8,7 +8,7 @@
 #include "Car.h"
 #include "Network_Manager.h"
 
-void recieve_data(Network_Manager& network_manager, Window& window)
+void recieve_data(Network_Manager& network_manager, Window& window, Car default_car)
 {
     std::string* clients = new std::string[10];
     int clients_count = 0;
@@ -44,6 +44,8 @@ void recieve_data(Network_Manager& network_manager, Window& window)
             data >> address;
             network_manager.send_client_info(clients_count, clients, address);
 
+            window.create_car(default_car);
+
             clients[clients_count] = address;
             clients_count ++;
         }
@@ -70,11 +72,11 @@ int main()
     Car car(15, 62, 30, 1.5, 20, Vector(300, 300), pixels_per_meter);
 
     Window window(Vector(1000, 700), 10, pixels_per_meter);
-    int car_id = window.create_car(car);
-    int car2_id = window.create_car(car);
+    //int car_id = window.create_car(car);
+    //int car2_id = window.create_car(car);
 
     Network_Manager network_manager(9958);
-    std::thread listen_thread(recieve_data, std::ref(network_manager), std::ref(window));
+    std::thread listen_thread(recieve_data, std::ref(network_manager), std::ref(window), car);
 
     bool window_open = true;
     while (window_open == true)
@@ -103,7 +105,7 @@ int main()
         }
 
         car.update_pos(acceleration, steering, window.delta_time);
-        window.update_car(car.position, car.rotation, car_id);
+        window.update_player_car(car.position, car.rotation);
 
         window_open = window.update();
     }
