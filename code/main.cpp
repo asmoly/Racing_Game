@@ -69,7 +69,7 @@ int main()
 {
     Map map(std::string("maps/moscow/"));
 
-    Car car(15, 62, 30, 1.5, 20, Vector(300, 300), map.pixels_per_meter);
+    Car car(15, 62, 30, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
 
     Window window(Vector(1200, 800), 10, map.pixels_per_meter, map.path_to_background);
 
