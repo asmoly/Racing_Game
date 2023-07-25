@@ -55,6 +55,7 @@ void recieve_data(Network_Manager& network_manager, Window& window, Car default_
             for (int i = 0; i < clients_count; i++)
             {
                 data >> clients[i];
+                window.create_car(default_car);
             }
 
             data >> address;
@@ -72,10 +73,9 @@ int main()
     Car car(15, 62, 30, 1.5, 20, Vector(300, 300), pixels_per_meter);
 
     Window window(Vector(1000, 700), 10, pixels_per_meter);
-    //int car_id = window.create_car(car);
-    //int car2_id = window.create_car(car);
 
     Network_Manager network_manager(9958);
+    network_manager.connect("192.168.1.61");
     std::thread listen_thread(recieve_data, std::ref(network_manager), std::ref(window), car);
 
     bool window_open = true;

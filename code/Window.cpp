@@ -76,6 +76,8 @@ void Window::update_player_car(const Vector& pos, const float& rotation)
 
 void Window::draw()
 {
+    this->window.draw(player_car);
+
     for (int i = 0; i < this->car_counter; i++)
     {
         this->window.draw(this->cars[i]);
