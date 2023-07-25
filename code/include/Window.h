@@ -11,12 +11,12 @@ class Window
 {
 public:
     Window() = default;
-    Window(const Vector& window_dimensions, const int& max_num_of_cars, const int& pixels_per_meter);
+    Window(const Vector& window_dimensions, const int& max_num_of_cars, const int& pixels_per_meter, const std::string& path_to_map_background);
 
     bool update();
 
     int create_car(const Car& car);
-    void update_car(const Vector& pos, const float& rotation, const int& car_id);
+    void update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos);
 
     void update_player_car(const Vector& pos, const float& rotation);
 
@@ -29,6 +29,9 @@ private:
 private:
     sf::RenderWindow window;
     sf::Texture car_texture;
+    
+    sf::Texture map_texture;
+    sf::Sprite map_sprite;
     
     sf::Clock clock;
 

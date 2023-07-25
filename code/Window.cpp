@@ -6,7 +6,7 @@
 #include "Vector.h"
 #include "Window.h"
 
-Window::Window(const Vector& window_dimensions, const int& max_num_of_cars, const int& pixels_per_meter)
+Window::Window(const Vector& window_dimensions, const int& max_num_of_cars, const int& pixels_per_meter, const std::string& path_to_map_background)
 {
     this->window.create(sf::VideoMode(window_dimensions.x, window_dimensions.y), "Racing Game");
 
@@ -18,6 +18,9 @@ Window::Window(const Vector& window_dimensions, const int& max_num_of_cars, cons
 
     this->car_texture.loadFromFile("cars/race_car.png");
     this->car_scale = 3.0f*pixels_per_meter/this->car_texture.getSize().x;
+
+    this->map_texture.loadFromFile(path_to_map_background);
+    this->map_sprite.setTexture(this->map_texture);
 
     this->delta_time = this->clock.restart().asSeconds();
 
@@ -62,21 +65,35 @@ int Window::create_car(const Car& car)
     return this->car_counter - 1;
 }
 
-void Window::update_car(const Vector& pos, const float& rotation, const int& car_id)
+void Window::update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos)
 {
-    this->cars[car_id].setPosition(sf::Vector2f(pos.x, pos.y));
+    //this->cars[car_id].setPosition(sf::Vector2f(pos.x, pos.y));
+    Vector difference_in_pos;
+    difference_in_pos.x = pos.x - player_car_pos.x;
+    difference_in_pos.y = pos.y - player_car_pos.y;
+
+    this->cars[car_id].setPosition(sf::Vector2f(window.getSize().x/2 + difference_in_pos.x, window.getSize().y/2 + difference_in_pos.y));
     this->cars[car_id].setRotation(rotation);
 }
 
 void Window::update_player_car(const Vector& pos, const float& rotation)
 {
-    this->player_car.setPosition(sf::Vector2f(pos.x, pos.y));
+    this->player_car.setPosition(sf::Vector2f(window.getSize().x/2.0f, window.getSize().y/2.0f));
+    //this->player_car.setPosition(sf::Vector2f(pos.x, pos.y));
     this->player_car.setRotation(rotation);
+
+    float x = pos.x - window.getSize().x/2;
+    float y = pos.y - window.getSize().y/2;
+    float width = window.getSize().x;
+    float height = window.getSize().y;
+
+    this->map_sprite.setTextureRect(sf::IntRect(x, y, width, height));
 }
 
 void Window::draw()
 {
-    this->window.draw(player_car);
+    this->window.draw(this->map_sprite);
+    this->window.draw(this->player_car);
 
     for (int i = 0; i < this->car_counter; i++)
     {
