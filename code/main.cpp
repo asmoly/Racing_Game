@@ -8,11 +8,8 @@
 #include "Car.h"
 #include "Network_Manager.h"
 
-void recieve_data(Network_Manager& network_manager, Window& window, Car default_car)
+void recieve_and_send_data(Network_Manager& network_manager, Window& window, Car default_car, std::string* clients, int& clients_count)
 {
-    std::string* clients = new std::string[10];
-    int clients_count = 0;
-
     while (true)
     {
         sf::Packet data = network_manager.listen();
@@ -61,6 +58,7 @@ void recieve_data(Network_Manager& network_manager, Window& window, Car default_
             data >> address;
 
             clients[clients_count] = address;
+            window.create_car(default_car);
             clients_count ++;
         }
     }
@@ -76,12 +74,19 @@ int main()
 
     Network_Manager network_manager(9958);
     network_manager.connect("192.168.1.61");
-    std::thread listen_thread(recieve_data, std::ref(network_manager), std::ref(window), car);
+
+    std::string* clients = new std::string[10];
+    int clients_count = 0;
+    std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count));
 
     bool window_open = true;
     while (window_open == true)
     {
-        network_manager.send_data(car.position.x, car.position.y, car.rotation, std::string("192.168.1.61"));
+        for (int i = 0; i < clients_count; i++)
+        {
+            network_manager.send_data(car.position.x, car.position.y, car.rotation, std::string(clients[i]));
+        }
+        //network_manager.send_data(car.position.x, car.position.y, car.rotation, std::string("192.168.1.61"));
 
         float acceleration = 0;
         float steering = 0;
