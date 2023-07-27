@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <thread>
 #include "SFML/System.hpp"
 #include "SFML/Network.hpp"
@@ -9,8 +11,47 @@
 #include "Network_Manager.h"
 #include "Map.h"
 
-void recieve_and_send_data(Network_Manager& network_manager, Window& window, Car default_car, std::string* clients, int& clients_count, Car& player_car)
+std::string wait_for_Connection(Network_Manager& network_manager, std::string* clients, int& clients_count, Window& window)
 {
+    bool recieved_map = false;
+    while (recieved_map == false)
+    {
+        sf::Packet data = network_manager.listen();
+
+        int status;
+        std::string address;
+        std::string map_name;
+
+        data >> status;
+
+        if (status == 2)
+        {
+            data >> clients_count;
+            for (int i = 0; i < clients_count; i++)
+            {
+                data >> clients[i];
+            }
+
+            data >> map_name;
+            data >> address;
+
+            clients[clients_count] = address;
+            clients_count ++;
+
+            return map_name;
+        }
+    }
+
+    return std::string("no data");
+}
+
+void recieve_and_send_data(Network_Manager& network_manager, Window& window, Car default_car, std::string* clients, int& clients_count, Car& player_car, const std::string& map_name)
+{
+    for (int i = 0; i < clients_count; i++)
+    {
+        window.create_car(default_car);
+    }
+
     while (true)
     {
         sf::Packet data = network_manager.listen();
@@ -40,45 +81,72 @@ void recieve_and_send_data(Network_Manager& network_manager, Window& window, Car
         else if (status == 1)
         {
             data >> address;
-            network_manager.send_client_info(clients_count, clients, address);
+            network_manager.send_client_info(clients_count, clients, address, map_name);
 
             window.create_car(default_car);
 
             clients[clients_count] = address;
             clients_count ++;
         }
-        else if (status == 2)
-        {
-            data >> clients_count;
-            for (int i = 0; i < clients_count; i++)
-            {
-                data >> clients[i];
-                window.create_car(default_car);
-            }
+        // else if (status == 2)
+        // {
+        //     data >> clients_count;
+        //     for (int i = 0; i < clients_count; i++)
+        //     {
+        //         data >> clients[i];
+        //         window.create_car(default_car);
+        //     }
 
-            data >> address;
+        //     data >> address;
 
-            clients[clients_count] = address;
-            window.create_car(default_car);
-            clients_count ++;
-        }
+        //     clients[clients_count] = address;
+        //     window.create_car(default_car);
+        //     clients_count ++;
+        // }
     }
 }
 
 int main()
 {
-    Map map(std::string("maps/moscow/"));
+    Window window(Vector(1200, 800), 10);
+    std::string code = window.start_screen();
 
-    Car car(15, 62, 30, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
+    // Ip also acts as map name if hosting
+    std::string ip;
+    std::string port_as_string;
+    int split_mark = code.find("/");
+    ip = code.substr(0, split_mark);
+    port_as_string = code.substr(split_mark + 1, code.length());
+    int port = std::stoi(port_as_string);
 
-    Window window(Vector(1200, 800), 10, map.pixels_per_meter, map.path_to_background);
+    Map map;
+    std::string map_name;
+    bool host = false;
+    if (ip.find("?") == 0)
+    {
+        ip.erase(0, 1);
+        host = true;
+        map = Map(ip);
+        map_name = ip;
+    }
 
-    Network_Manager network_manager(9958);
-    network_manager.connect("192.168.1.61");
+    Network_Manager network_manager(port);
+    network_manager.connect(ip);
 
     std::string* clients = new std::string[10];
     int clients_count = 0;
-    std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car));
+
+    std::stringstream path_to_map;
+    if (host == false)
+    {
+        map_name = wait_for_Connection(network_manager, clients, clients_count, window);
+        path_to_map << "maps/" << map_name;
+        map = Map(path_to_map.str());
+    }
+
+    Car car(30, 70, 40, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
+
+    std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
 
     bool window_open = true;
     while (window_open == true)

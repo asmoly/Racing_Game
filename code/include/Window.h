@@ -11,9 +11,11 @@ class Window
 {
 public:
     Window() = default;
-    Window(const Vector& window_dimensions, const int& max_num_of_cars, const int& pixels_per_meter, const std::string& path_to_map_background);
+    Window(const Vector& window_dimensions, const int& max_num_of_cars);
 
     bool update();
+    std::string start_screen();
+    void load_map(const std::string& path_to_map_background, const int& pixels_per_meter);
 
     int create_car(const Car& car);
     void update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos);
@@ -22,12 +24,12 @@ public:
 
 public:
     float delta_time;
+    sf::RenderWindow window;
 
 private:
     void draw();
 
 private:
-    sf::RenderWindow window;
     sf::Texture car_texture;
     
     sf::Texture map_texture;
@@ -37,6 +39,9 @@ private:
 
     sf::Sprite* cars;
     sf::Sprite player_car;
+
+    sf::Font font;
+    sf::Text fps_text;
 
     int car_counter;
     int max_num_of_cars;

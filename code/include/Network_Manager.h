@@ -10,7 +10,7 @@ public:
 
     void send_data(const float& x, const float& y, const float& rotation, const std::string& address);
     void connect(const std::string& address);
-    void send_client_info(const int& num_of_clients, std::string* clients, const std::string& address);
+    void send_client_info(const int& num_of_clients, std::string* clients, const std::string& address, const std::string& map_name);
     
     sf::Packet listen();
 

@@ -38,7 +38,7 @@ void Car::update_pos(const float& acceleration, const float& steering, const flo
 
     Vector power_vector = Vector::scale(direction_vector, this->speed);
 
-    Matrix steering_rotation_matrix = Matrix::create_rotation_matrix((90.0f + this->max_steering_angle)*steering);
+    Matrix steering_rotation_matrix = Matrix::create_rotation_matrix((90.0f*steering + this->max_steering_angle*steering));
     Vector steering_vector = Matrix::multiply(steering_rotation_matrix, direction_vector);
     steering_vector = Vector::scale(steering_vector, road_friction*delta_time);
 

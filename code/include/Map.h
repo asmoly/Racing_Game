@@ -14,4 +14,5 @@ public:
     std::string path_to_collision_mask;
     float pixels_per_meter;
     Vector starting_pos;
+    std::string name;
 };

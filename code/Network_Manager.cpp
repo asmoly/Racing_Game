@@ -58,7 +58,7 @@ void Network_Manager::connect(const std::string& address)
     }
 }
 
-void Network_Manager::send_client_info(const int& num_of_clients,std::string* clients, const std::string& address)
+void Network_Manager::send_client_info(const int& num_of_clients,std::string* clients, const std::string& address, const std::string& map_name)
 {
     sf::Packet packet;
     packet << 2 << num_of_clients;
@@ -66,6 +66,8 @@ void Network_Manager::send_client_info(const int& num_of_clients,std::string* cl
     {
         packet << clients[i];
     }
+
+    packet << map_name;
 
     sf::IpAddress recipient = address;
     unsigned short port = this->port;
