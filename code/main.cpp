@@ -121,12 +121,17 @@ int main()
 
     Map map;
     std::string map_name;
+    std::stringstream path_to_map;
+
     bool host = false;
     if (ip.find("?") == 0)
     {
         ip.erase(0, 1);
         host = true;
-        map = Map(ip);
+        path_to_map << "maps/" << ip << "/";
+
+        std::cout << path_to_map.str() << std::endl;
+        map = Map(path_to_map.str());
         map_name = ip;
     }
 
@@ -136,17 +141,19 @@ int main()
     std::string* clients = new std::string[10];
     int clients_count = 0;
 
-    std::stringstream path_to_map;
     if (host == false)
     {
+        std::cout << "connecting" << std::endl;
         map_name = wait_for_Connection(network_manager, clients, clients_count, window);
-        path_to_map << "maps/" << map_name;
+        path_to_map << "maps/" << map_name << "/";
         map = Map(path_to_map.str());
     }
 
+    window.load_map(map.path_to_background, map.pixels_per_meter);
+
     Car car(30, 70, 40, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
 
-    std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
+    //std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
 
     bool window_open = true;
     while (window_open == true)

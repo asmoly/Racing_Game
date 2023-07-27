@@ -18,13 +18,11 @@ Window::Window(const Vector& window_dimensions, const int& max_num_of_cars)
     this->max_num_of_cars = max_num_of_cars;
 
     this->car_texture.loadFromFile("cars/race_car.png");
-    this->car_scale = 6.0f*pixels_per_meter/this->car_texture.getSize().x;
 
     this->delta_time = this->clock.restart().asSeconds();
 
     this->player_car.setTexture(this->car_texture);
     this->player_car.setOrigin(sf::Vector2f(this->car_texture.getSize().x/2.0f, this->car_texture.getSize().y/2.0f));
-    this->player_car.setScale(sf::Vector2f(this->car_scale, this->car_scale));
 
     if (!this->font.loadFromFile("fonts/arial.ttf"))
     {
@@ -37,12 +35,15 @@ Window::Window(const Vector& window_dimensions, const int& max_num_of_cars)
     this->fps_text.setPosition(sf::Vector2f(10.0f, 10.0f));
 }
 
-void Window::load_map(const std::string& path_to_map_background, const int& pixels_per_meter)
+void Window::load_map(const std::string& path_to_map_background, const float& pixels_per_meter)
 {
     this->map_texture.loadFromFile(path_to_map_background);
     this->map_sprite.setTexture(this->map_texture);
 
+    std::cout << pixels_per_meter << std::endl;
     this->pixels_per_meter = pixels_per_meter;
+    this->car_scale = 6.0f*pixels_per_meter/this->car_texture.getSize().x;
+    this->player_car.setScale(sf::Vector2f(this->car_scale, this->car_scale));
 }
 
 bool Window::update()

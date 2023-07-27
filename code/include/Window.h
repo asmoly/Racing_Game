@@ -15,7 +15,7 @@ public:
 
     bool update();
     std::string start_screen();
-    void load_map(const std::string& path_to_map_background, const int& pixels_per_meter);
+    void load_map(const std::string& path_to_map_background, const float& pixels_per_meter);
 
     int create_car(const Car& car);
     void update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos);
