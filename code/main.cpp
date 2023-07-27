@@ -136,7 +136,6 @@ int main()
     }
 
     Network_Manager network_manager(port);
-    network_manager.connect(ip);
 
     std::string* clients = new std::string[10];
     int clients_count = 0;
@@ -144,6 +143,7 @@ int main()
     if (host == false)
     {
         std::cout << "connecting" << std::endl;
+        network_manager.connect(ip);
         map_name = wait_for_Connection(network_manager, clients, clients_count, window);
         path_to_map << "maps/" << map_name << "/";
         map = Map(path_to_map.str());
