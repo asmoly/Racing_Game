@@ -11,9 +11,12 @@
 #include "Network_Manager.h"
 #include "Map.h"
 
-std::string wait_for_Connection(Network_Manager& network_manager, std::string* clients, int& clients_count, Window& window)
+std::string wait_for_Connection(Network_Manager& network_manager, std::string* clients, int& clients_count, Window& window, const std::string& ip)
 {
     bool recieved_map = false;
+
+    network_manager.connect(ip);
+    
     while (recieved_map == false)
     {
         sf::Packet data = network_manager.listen();
@@ -23,6 +26,7 @@ std::string wait_for_Connection(Network_Manager& network_manager, std::string* c
         std::string map_name;
 
         data >> status;
+        std::cout << status << std::endl;
 
         if (status == 2)
         {
@@ -38,6 +42,7 @@ std::string wait_for_Connection(Network_Manager& network_manager, std::string* c
             clients[clients_count] = address;
             clients_count ++;
 
+            recieved_map = true;
             return map_name;
         }
     }
@@ -143,8 +148,7 @@ int main()
     if (host == false)
     {
         std::cout << "connecting" << std::endl;
-        network_manager.connect(ip);
-        map_name = wait_for_Connection(network_manager, clients, clients_count, window);
+        map_name = wait_for_Connection(network_manager, clients, clients_count, window, ip);
         path_to_map << "maps/" << map_name << "/";
         map = Map(path_to_map.str());
     }
@@ -153,7 +157,7 @@ int main()
 
     Car car(30, 70, 40, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
 
-    //std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
+    std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
 
     bool window_open = true;
     while (window_open == true)
