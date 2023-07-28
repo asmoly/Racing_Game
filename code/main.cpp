@@ -117,7 +117,6 @@ int main()
         host = true;
         path_to_map << "maps/" << ip << "/";
 
-        std::cout << path_to_map.str() << std::endl;
         map = Map(path_to_map.str());
         map_name = ip;
     }
@@ -131,7 +130,6 @@ int main()
     {
         std::cout << "connecting" << std::endl;
         map_name = wait_for_Connection(network_manager, clients, clients_count, window, ip);
-        path_to_map << "maps/" << map_name << "/";
         map = Map(path_to_map.str());
     }
 
@@ -140,6 +138,8 @@ int main()
     Car car(30, 70, 40, 1.5, 20, Vector(map.starting_pos.x, map.starting_pos.y), map.pixels_per_meter);
 
     std::thread listen_thread(recieve_and_send_data, std::ref(network_manager), std::ref(window), car, std::ref(clients), std::ref(clients_count), std::ref(car), map_name);
+
+    float zoom = 0.0f;
 
     bool window_open = true;
     while (window_open == true)
@@ -170,8 +170,17 @@ int main()
             steering = 1;
         }
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            zoom += 10.0;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            zoom -= 10.0;
+        }
+
         car.update_pos(acceleration, steering, window.delta_time);
-        window.update_player_car(car.position, car.rotation);
+        window.update_player_car(car.position, car.rotation, zoom);
 
         window_open = window.update();
     }
