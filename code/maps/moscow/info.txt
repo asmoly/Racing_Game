@@ -2,10 +2,10 @@ path_to_background
 moscow.png
 
 starting_x
-2000
+6000
 
 starting_y
-2000
+6000
 
 pixels_per_meter
 6.8

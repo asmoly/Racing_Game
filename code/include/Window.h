@@ -20,7 +20,7 @@ public:
     int create_car(const Car& car);
     void update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos);
 
-    void update_player_car(const Vector& pos, const float& rotation);
+    void update_player_car(const Vector& pos, const float& rotation, const float& map_zoom);
 
 public:
     float delta_time;
@@ -47,4 +47,5 @@ private:
     int max_num_of_cars;
     int pixels_per_meter;
     float car_scale;
+    float map_scale;
 };
