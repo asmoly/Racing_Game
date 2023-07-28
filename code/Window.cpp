@@ -42,7 +42,6 @@ void Window::load_map(const std::string& path_to_map_background, const float& pi
     this->map_texture.loadFromFile(path_to_map_background);
     this->map_sprite.setTexture(this->map_texture);
 
-    std::cout << pixels_per_meter << std::endl;
     this->pixels_per_meter = pixels_per_meter;
     this->car_scale = 6.0f*pixels_per_meter/this->car_texture.getSize().x;
     this->player_car.setScale(sf::Vector2f(this->car_scale, this->car_scale));
@@ -169,17 +168,19 @@ int Window::create_car(const Car& car)
 
 void Window::update_car(const Vector& pos, const float& rotation, const int& car_id, const Vector& player_car_pos)
 {
-    //this->cars[car_id].setPosition(sf::Vector2f(pos.x, pos.y));
+    // Updates client car relative to camera and player position
     Vector difference_in_pos;
     difference_in_pos.x = pos.x - player_car_pos.x;
     difference_in_pos.y = pos.y - player_car_pos.y;
 
-    this->cars[car_id].setPosition(sf::Vector2f(window.getSize().x/2 + difference_in_pos.x, window.getSize().y/2 + difference_in_pos.y));
+    this->cars[car_id].setPosition(sf::Vector2f(window.getSize().x/2 + difference_in_pos.x*this->map_scale, window.getSize().y/2 + difference_in_pos.y*this->map_scale));
     this->cars[car_id].setRotation(rotation);
+    this->cars[car_id].setScale(sf::Vector2f(this->car_scale*this->map_scale, this->car_scale*this->map_scale));
 }
 
 void Window::update_player_car(const Vector& pos, const float& rotation, const float& map_zoom)
 {
+    // Updates the position of player car and camera
     this->player_car.setPosition(sf::Vector2f(window.getSize().x/2.0f, window.getSize().y/2.0f));
     this->player_car.setRotation(rotation);
 
