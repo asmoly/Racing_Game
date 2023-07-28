@@ -13,11 +13,10 @@
 
 std::string wait_for_Connection(Network_Manager& network_manager, std::string* clients, int& clients_count, Window& window, const std::string& ip)
 {
-    bool recieved_map = false;
-
     network_manager.connect(ip);
     
-    while (recieved_map == false)
+    int time_for_connection = 500;
+    for (int i = 0; i < time_for_connection; i++)
     {
         sf::Packet data = network_manager.listen();
 
@@ -26,7 +25,6 @@ std::string wait_for_Connection(Network_Manager& network_manager, std::string* c
         std::string map_name;
 
         data >> status;
-        std::cout << status << std::endl;
 
         if (status == 2)
         {
@@ -42,7 +40,6 @@ std::string wait_for_Connection(Network_Manager& network_manager, std::string* c
             clients[clients_count] = address;
             clients_count ++;
 
-            recieved_map = true;
             return map_name;
         }
     }
@@ -93,21 +90,6 @@ void recieve_and_send_data(Network_Manager& network_manager, Window& window, Car
             clients[clients_count] = address;
             clients_count ++;
         }
-        // else if (status == 2)
-        // {
-        //     data >> clients_count;
-        //     for (int i = 0; i < clients_count; i++)
-        //     {
-        //         data >> clients[i];
-        //         window.create_car(default_car);
-        //     }
-
-        //     data >> address;
-
-        //     clients[clients_count] = address;
-        //     window.create_car(default_car);
-        //     clients_count ++;
-        // }
     }
 }
 
