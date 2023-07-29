@@ -11,4 +11,4 @@ starting_y
 1755
 
 pixels_per_meter
-5
+4

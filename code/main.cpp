@@ -130,6 +130,7 @@ int main()
     {
         std::cout << "connecting" << std::endl;
         map_name = wait_for_Connection(network_manager, clients, clients_count, window, ip);
+        path_to_map << "maps/" << map_name << "/";
         map = Map(path_to_map.str());
     }
 
